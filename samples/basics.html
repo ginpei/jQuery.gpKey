@@ -1,0 +1,130 @@
+<!DOCTYPE HTML>
+
+<!-- There are JavaScript sample codes in bottom. -->
+
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>jQuery.gpKey</title>
+  <style type="text/css">
+body {
+  font-family: "Times", "Times New Roman", serif;
+}
+pre {
+  background-color: #fffff0;
+  border: ridge 2px;
+  display: inline-block;
+  font-family: 'Courier', 'Courier New', monospace;
+  padding: 1em;
+}
+
+.box {
+  border: solid 1px #ccc;
+  display: table-cell;
+  height: 150px;
+  margin: 5px;
+  padding: 1px;
+  text-align: center;
+  vertical-align: middle;
+  width: 300px;
+}
+.gpkey-current {
+  box-shadow: 0 0 5px rgba(0,0,127,.8);
+  border-color: #999;
+}
+  </style>
+</head>
+<body>
+  <h1>jQuery.gpKey</h1>
+  <div id="main">
+    <p>The plugin that manage key events on each elements with friendly command like <code>"^s"</code>.</p>
+    <p>for: IE 6+, Firefox, Chrome, Safari, Opera</p>
+    <p>
+      <pre>var type;  // "press", "down" or "up"
+$(elem).gpKey(type, {
+    "a": function() { /* code for "A" */ },
+   "^a": function() { /* code for "Ctrl + A" */ },
+   "&amp;a": function() { /* code for "Alt + A" */ },
+    "A": function() { /* code for "Shift + A" */ },
+  "^&amp;A": function() { /* code for "Ctrl + Alt + Shift + A" */ },
+  ...
+});</pre>
+    </p>
+    <p>
+      See sample codes in HTML source,<br />
+      and more informations in: <a href="http://ginpen.com/jquery/gpkey/">Ginpen.com</a>.
+    </p>
+    <div id="text" class="box">Click here and type "A" keys with any modifier keys.</div>
+    <div id="keys" class="box">Click here and type keys: "A", "1", F1, Enter, Tab, Space, BackSpace, Delete, Escape.</div>
+    <div id="arrows" class="box">Click here and type arrow keys.</div>
+  </div>
+  <div>
+    <script src="jquery-1.7.1.min.js"></script>
+    <script src="../jquery.gpkey-0.1.js"></script>
+    <script>
+(function() {
+  var $text = $('#text')
+    .gpKey('down', {
+        'a': function() { showKeyStatus('A'); },
+       '^a': function() { showKeyStatus('Ctrl + A'); },
+       '&a': function() { showKeyStatus('Alt + A'); },
+        'A': function() { showKeyStatus('Shift + A'); },
+      '^&a': function() { showKeyStatus('Ctrl + Alt + A'); },
+       '^A': function() { showKeyStatus('Ctrl + Shift + A'); },
+       '&A': function() { showKeyStatus('Alt + Shift + A'); },
+      '^&A': function() { showKeyStatus('Ctrl + Alt + Shift + A'); }
+    })
+    .on('blur.gpkey', function(event) {
+      showKeyStatus(textOrg);
+    });
+
+  var textOrg = $text.text();
+
+  function showKeyStatus(text) {
+    $text.text(text);
+  }
+}());
+(function() {
+  var $keys = $('#keys')
+    .gpKey('down', {
+      'a': function() { showKeyStatus('A'); },
+      '1': function() { showKeyStatus('1'); },
+      'f1': function() { showKeyStatus('F1'); },
+      'F1': function() { showKeyStatus('Shift + F1'); },
+      'enter': function() { showKeyStatus('Enter'); },
+      'tab': function() { showKeyStatus('Tab'); },
+      'space': function() { showKeyStatus('Space'); },
+      'backspace': function() { showKeyStatus('BackSpace'); },
+      'delete': function() { showKeyStatus('Delete'); },
+      'escape': function() { showKeyStatus('Escape'); }
+    })
+    .on('blur.gpkey', function(event) {
+      showKeyStatus(textOrg);
+    });
+  var textOrg = $keys.text();
+
+  function showKeyStatus(text) {
+    $keys.text(text);
+  }
+}());
+(function() {
+  var $arrows = $('#arrows')
+    .gpKey('down', {
+      'left': function() { showKeyStatus('←'); },
+      'up': function() { showKeyStatus('↑'); },
+      'right': function() { showKeyStatus('→'); },
+      'down': function() { showKeyStatus('↓'); }
+    })
+    .on('blur.gpkey', function(event) {
+      showKeyStatus(textOrg);
+    });
+  var textOrg = $arrows.text();
+
+  function showKeyStatus(text) {
+    $arrows.text(text);
+  }
+}());
+    </script>
+  </div>
+</body>
+</html>

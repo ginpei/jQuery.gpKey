@@ -1,0 +1,120 @@
+<!DOCTYPE HTML>
+
+<!-- There are JavaScript sample codes in bottom. -->
+
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>jQuery.gpKey</title>
+  <style type="text/css">
+body {
+  font-family: "Times", "Times New Roman", serif;
+}
+pre {
+  background-color: #fffff0;
+  border: ridge 2px;
+  display: inline-block;
+  font-family: 'Courier', 'Courier New', monospace;
+  padding: 1em;
+}
+
+.box-container {
+  border: solid 1px #ccc;
+  float: left;
+  height: 150px;
+  margin: 5px;
+  padding: 1px;
+  width: 300px;
+}
+.box-container.gpkey-current {
+  box-shadow: 0 0 5px rgba(0,0,127,.8);
+  border-color: #999;
+}
+.box {
+  background-color: #cef;
+  border: solid 1px #99c;
+  height: 48px;
+  position: relative;
+  width: 48px;
+}
+  </style>
+</head>
+<body>
+  <h1>jQuery.gpKey</h1>
+  <div id="main">
+    <div id="boxes">
+      <p>
+        Click boxes and use arrow keys to move the inside block with/without shift key.
+      </p>
+      <div id="box1" class="box-container">
+        <div class="box"></div>
+      </div>
+      <div id="box2" class="box-container">
+        <div class="box"></div>
+      </div>
+    </div>
+  </div>
+  <div>
+    <script src="jquery-1.7.1.min.js"></script>
+    <script src="../jquery.gpkey-0.1.js"></script>
+    <script>
+(function() {
+  $('.box-container')
+    .gpKey('down', {
+      'left':  function(event) { moveBox($(this), -1,  0); },
+      'LEFT':  function(event) { moveBox($(this), -9,  0); },
+      'up':    function(event) { moveBox($(this),  0, -1); },
+      'UP':    function(event) { moveBox($(this),  0, -9); },
+      'right': function(event) { moveBox($(this),  1,  0); },
+      'RIGHT': function(event) { moveBox($(this),  9,  0); },
+      'down':  function(event) { moveBox($(this),  0,  1); },
+      'DOWN':  function(event) { moveBox($(this),  0,  9); },
+    });
+
+  function moveBox($container, x, y) {
+    var $box = $container.find('.box');
+    if ($box.is(':animated')) {
+      return;
+    }
+
+    var properties = {};
+
+    if (x) {
+      var width = $box.outerWidth(true);
+      var diffX = x * width;
+      var curX = parseInt($box.css('left')) || 0;
+      var containerWidth = $container.width();
+      if (curX + diffX <= 0) {
+        properties.left = 0;
+      }
+      else if (curX + diffX >= containerWidth - width) {
+        properties.left = containerWidth - width;
+      }
+      else {
+        properties.left = '+=' + diffX;
+      }
+    }
+
+    if (y) {
+      var height = $box.outerHeight(true);
+      var diffY = y * height;
+      var curY = parseInt($box.css('top')) || 0;
+      var containerHeight = $container.height();
+      if (curY + diffY <= 0) {
+        properties.top = 0;
+      }
+      else if (curY + diffY >= containerHeight - height) {
+        properties.top = containerHeight - height;
+      }
+      else {
+        properties.top = '+=' + diffY;
+      }
+    }
+
+    $box.animate(properties, 100);
+  }
+}());
+    </script>
+  </div>
+</body>
+</html>
