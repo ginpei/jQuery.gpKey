@@ -6,8 +6,10 @@
  * Copyright (c) 2011 Takanashi Ginpei
  * http://ginpen.com
  *
- * Released under the MIT License.
+ * Released under the MIT License for personal use.
  * http://www.opensource.org/licenses/mit-license.php
+ *
+ * For other use, please contact me.
  */
 ;(function($) {
   try {
