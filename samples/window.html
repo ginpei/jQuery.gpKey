@@ -1,0 +1,162 @@
+<!DOCTYPE HTML>
+
+<!-- There are JavaScript sample codes in bottom. -->
+
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>jQuery.gpKey</title>
+  <style type="text/css">
+body {
+  font-family: "Times", "Times New Roman", serif;
+}
+
+.window {
+  border: outset 3px;
+  clear: all;
+  display: none;
+  margin: 5px;
+  width: 400px;
+}
+.window .title {
+  background-color: #ccc;
+  color: #fff;
+  font-weight: bold;
+  padding: 2px 5px;
+}
+.gpkey-current .title {
+  background-color: #009;
+}
+.window .menu {
+  background-color: #eee;
+}
+.window .menu span {
+  padding: 2px;
+}
+.window .menu span.active {
+  background-color: #006;
+  color: #fff;
+}
+.window .menu span kbd {
+  text-decoration: underline;
+}
+.window .list {
+  border: inset 2px;
+  margin: 5px;
+  padding: 0;
+}
+.window .list li {
+  display: block;
+  padding: 2px;
+}
+.window .list li.selected {
+  background-color: #ccc;
+  color: #fff;
+}
+.gpkey-current .list li.selected {
+  background-color: #006;
+}
+  </style>
+</head>
+<body>
+  <h1>jQuery.gpKey</h1>
+  <div id="main">
+    <ul>
+      <li>Alt+F ... Select File menu.</li>
+      <li>Ctrl+A ... Select all list items.</li>
+      <li>Escape ... Hide window.</li>
+    </ul>
+    <p>
+    <button id="show_window">Show Window</button>
+    </p>
+    <div class="window">
+      <div class="title">Window</div>
+      <div class="menu">
+        <span class="file">File (<kbd>F</kbd>)</span>
+        <span class="edit">Edit (<kbd>E</kbd>)</span>
+        <span class="help">Help (<kbd>H</kbd>)</span>
+      </div>
+      <ul class="list">
+        <li>Internet Exproler</li>
+        <li>Firefox</li>
+        <li>Chrome</li>
+        <li>Saferi</li>
+        <li>Opera</li>
+      </ul>
+    </div>
+  </div>
+  <div>
+    <script src="jquery-1.7.1.min.js"></script>
+    <script src="../jquery.gpkey-0.1.js"></script>
+    <script>
+(function() {
+  var $window = $('.window');
+  $('#show_window').click(function(event) {
+    $window
+      .fadeIn()
+      .gpKey('focus');
+  });
+  $window
+    .gpKey('keydown', {
+      'left': function(event) { selectMenu(-1); },
+      'right': function(event) { selectMenu(+1); },
+      '&f': function(event) { selectMenu('file'); },
+      '&e': function(event) { selectMenu('edit'); },
+      '&h': function(event) { selectMenu('help'); },
+      '^a': function(event) { selectAllItems() },
+      'escape': function(event) {
+        selectMenu(null);
+        $window.fadeOut();
+      }
+    })
+    .mousedown(function(event) {
+      selectMenu(null);
+
+      var additional = $.gpKey.ctrl();
+      var $item = $(event.target).closest('li');
+      if ($item.length > 0) {
+        selectItem($item, additional);
+      }
+    });
+
+  function selectMenu(name) {
+    var $active = $window.find('.menu .active')
+      .removeClass('active');
+
+    var $next;
+    if (name == -1 && $active.length > 0) {
+      $next = $active.prev('span');
+      if ($next.length < 1) {
+        $next = $window.find('.menu span').last();
+      }
+    }
+    else if (name == 1 && $active.length > 0) {
+      $next = $active.next('span');
+      if ($next.length < 1) {
+        $next = $window.find('.menu span').first();
+      }
+    }
+    else if (name) {
+      $next = $window.find('.menu .' + name);
+    }
+
+    if ($next) {
+      $next.addClass('active');
+    }
+  }
+
+  function selectItem($item, additional) {
+    if (!additional) {
+      $window.find('.list li.selected').removeClass('selected');
+    }
+    $item.addClass('selected');
+  }
+
+  function selectAllItems() {
+    $window.find('.list li').addClass('selected');
+  }
+}());
+    </script>
+  </div>
+</body>
+</html>
