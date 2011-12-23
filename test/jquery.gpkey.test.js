@@ -133,6 +133,15 @@ test('get command', function() {
     shiftKey: true
   };
   equal(GpKey.getCommand(event), '^&A');
+
+  var event = {
+    altKey: true,
+    ctrlKey: true,
+    keyCode: 17,  // Control
+    metaKey: false,
+    shiftKey: true
+  };
+  equal(GpKey.getCommand(event), 'not matched');
 });
 
 test('get key name', function() {

@@ -1,0 +1,88 @@
+<!DOCTYPE HTML>
+
+<!-- There are JavaScript sample codes in bottom. -->
+
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>jQuery.gpKey</title>
+  <style type="text/css">
+body {
+  font-family: "Times", "Times New Roman", serif;
+}
+
+.box {
+  border: solid 1px #ccc;
+  display: table-cell;
+  height: 150px;
+  margin: 5px;
+  padding: 1px;
+  text-align: center;
+  vertical-align: middle;
+  width: 300px;
+}
+.gpkey-current {
+  box-shadow: 0 0 5px rgba(0,0,127,.8);
+  border-color: #999;
+  font-family: "Courier New", monospace;
+  text-align: left;
+}
+  </style>
+</head>
+<body>
+  <h1>jQuery.gpKey</h1>
+  <div id="main">
+    <div id="vi" class="box">Click here and type Vi commands.</div>
+  </div>
+  <div>
+    <script src="jquery-1.7.1.min.js"></script>
+    <script src="../jquery.gpkey-0.1.js"></script>
+    <script>
+(function() {
+  var $block = $('#vi')
+    .gpKey('down', {
+      'enter': function(event) {
+        alert('command: "' + commandStack + '"');
+        commandStack = '';
+        showKeyStatus(commandStack);
+      },
+      'escape': function(event) {
+        return $(this).gpKey('trigger', 'down', '^c');
+      },
+      '^c': function(event) {
+        commandStack = '';
+        showKeyStatus(commandStack);
+      },
+      '*': function(event, gp) {
+        if (event.isDefaultPrevented()) {
+          return;
+        }
+
+        if (gp.command) {
+          commandStack += gp.command;
+          showKeyStatus(commandStack);
+        }
+      }
+    })
+    .on('focus.gpkey', function(event) {
+      commandStack = '';
+      showKeyStatus(commandStack);
+    })
+    .on('blur.gpkey', function(event) {
+      showKeyStatus(textOrg);
+    });
+
+  var textOrg = $block.text();
+  var commandStack = ':';
+
+  function showKeyStatus(text) {
+    if ($block.hasClass('gpkey-current')) {
+      text = ':' + text + '_';
+    }
+    $block.text(text);
+  }
+}());
+    </script>
+  </div>
+</body>
+</html>

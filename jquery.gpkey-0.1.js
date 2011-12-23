@@ -151,10 +151,18 @@
       var type = this._fixTypeName(event.type);
       var command = this.getCommand(event);
 
-      var executed = inst.trigger(type, command);
+      // run command filling the condition
+      var executed = inst.triggerWith(type, command, event);
       if (executed) {
         event.preventDefault();
       }
+
+      // run any-key command
+      var gp = {
+        command: command,
+        executed: executed
+      };
+      inst.triggerWith(type, '*', event, {command: command});
     },
 
     /**
@@ -164,21 +172,22 @@
      */
     getCommand: function(event) {
       var command = '';
-
-      if (event.ctrlKey || event.metaKey) {
-        command += '^';
-      }
-
-      if (event.altKey) {
-        command += '&';
-      }
-
       var key = this._getKeyName(event.keyCode);
-      if (event.shiftKey) {
-        command += key.toUpperCase();
-      }
-      else {
-        command += key;
+      if (key) {
+        if (event.ctrlKey || event.metaKey) {
+          command += '^';
+        }
+
+        if (event.altKey) {
+          command += '&';
+        }
+
+        if (event.shiftKey) {
+          command += key.toUpperCase();
+        }
+        else {
+          command += key;
+        }
       }
 
       return command;
@@ -330,9 +339,20 @@
      * @returns {Boolean} True if executed.
      */
     trigger: function(type, command) {
+      this.triggerWith(type, command);
+    },
+
+    /**
+     * @param {String} type
+     * @param {String} command
+     * @param {Event} [event]
+     * @param {Object} [data] any data for handler.
+     * @returns {Boolean} True if executed.
+     */
+    triggerWith: function(type, command, event, data) {
       var fn = this._getHandler(type, command);
       if (fn) {
-        this._exec(fn);
+        this._exec(fn, event, data);
         return true;
       }
       else {
@@ -359,9 +379,10 @@
     /**
      * @param {Function} fn
      * @param {Event} [event]
+     * @param {Object} [data] any data for handler.
      */
-    _exec: function(fn, event) {
-      fn.apply(this.$el[0], [event]);
+    _exec: function(fn, event, data) {
+      fn.apply(this.$el[0], [event, data]);
     },
 
     /**
